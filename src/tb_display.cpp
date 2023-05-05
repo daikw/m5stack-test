@@ -23,22 +23,26 @@
  ******************************************************************************/
 
 #include <Arduino.h>
-#include <M5StickC.h>
+#include <M5StickCPlus.h>
 #include "tb_display.h"
+
+// M5StickC display size:       (80, 160)
+// M5StickC-Plus display size:  (135, 240)
+#define LCD_VERTICAL_MAX 135
+#define LCD_HORIZONTAL_MAX 240
+
+// A small margin on the right side prevent false print results
+#define LCD_DISPLAY_MARGIN 2
 
 // TextSize 1 is very small on the display = hard to read
 // Textsize 2 is good readable without the need of an microscope.
 // This code only runs with text size 2!
 #define TEXT_SIZE 2
 #define TEXT_HEIGHT 16 // Height of text to be printed
-// Display size of M5StickC = 160x80
-// With TEXT_HEIGHT=16, the screen can display:
-//    5 rows of text in portrait mode
-//   10 rows of text in landscape mode
 
-// screen buffer for 10 rows of 60 characters max.
-#define TEXT_BUFFER_HEIGHT_MAX 10
-#define TEXT_BUFFER_LINE_LENGTH_MAX 60
+// screen buffer max.
+#define TEXT_BUFFER_HEIGHT_MAX (LCD_HORIZONTAL_MAX / TEXT_HEIGHT)
+#define TEXT_BUFFER_LINE_LENGTH_MAX (LCD_HORIZONTAL_MAX / TEXT_SIZE)
 char text_buffer[TEXT_BUFFER_HEIGHT_MAX][TEXT_BUFFER_LINE_LENGTH_MAX];
 
 int text_buffer_height;
@@ -66,10 +70,6 @@ boolean tb_display_word_wrap = true;
 // 2 = Button above
 // 3 = Button left
 // 4 = Button below
-// Display size of M5StickC = 160x80pixel
-// With TEXT_HEIGHT=16, the screen can display:
-//    5 rows of text in landscape mode
-//   10 rows of text in portrait mode
 // =============================================================
 void tb_display_init(int ScreenRotation)
 {
@@ -79,23 +79,17 @@ void tb_display_init(int ScreenRotation)
     case 1:
     case 3:
     {
-        // 5 rows of text in landscape mode
-        text_buffer_height = 5;
-        text_buffer_line_length = 60;
-        // width of the screen in landscape mode is 160 pixel
-        // A small margin on the right side prevent false print results
-        screen_max = 160 - 2;
+        text_buffer_height = LCD_VERTICAL_MAX / TEXT_HEIGHT;
+        text_buffer_line_length = TEXT_BUFFER_LINE_LENGTH_MAX;
+        screen_max = LCD_HORIZONTAL_MAX - LCD_DISPLAY_MARGIN;
         break;
     }
     case 2:
     case 4:
     {
-        // 10 rows of text in portrait mode
-        text_buffer_height = 10;
-        text_buffer_line_length = 30;
-        // width of the screen in portrait mode is 80 pixel
-        // A small margin on the right side prevent false print results
-        screen_max = 80 - 2;
+        text_buffer_height = LCD_HORIZONTAL_MAX / TEXT_HEIGHT;
+        text_buffer_line_length = TEXT_BUFFER_LINE_LENGTH_MAX / 2;
+        screen_max = LCD_VERTICAL_MAX - LCD_DISPLAY_MARGIN;
         break;
     }
     default:

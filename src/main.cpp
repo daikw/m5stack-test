@@ -2,36 +2,39 @@
 #include <WiFi.h>
 
 #include "secrets.h"
+#include "tb_display.h"
 
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASS;
 
+uint8_t screen_brightness = 10;
+int screen_orientation = 3;
+
 WiFiServer server(80);
+
+//
+// Utility ----------------------------------------------------------------------------------------
+//
 
 void LCD_Reset()
 {
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 0);
   M5.Lcd.setTextColor(WHITE);
-  M5.Lcd.setRotation(1);
-  M5.Lcd.setTextSize(1);
-}
 
-void write(int n)
-{
-  M5.Lcd.write(n);
-  Serial.write(n);
+  tb_display_init(screen_orientation);
 }
 
 void print(String str)
 {
-  M5.Lcd.print(str);
+  tb_display_print_String(str.c_str(), 50);
   Serial.print(str);
 }
 
 void println(String str)
 {
-  M5.Lcd.println(str);
+  tb_display_print_String(str.c_str(), 50);
+  tb_display_print_String("\n", 50);
   Serial.println(str);
 }
 
@@ -48,9 +51,13 @@ void connectWiFi()
   }
   println("");
   println("WiFi connected.");
-  println("IP address: ");
+  print("IP address: ");
   println(WiFi.localIP().toString());
 }
+
+//
+// Main ---------------------------------------------------------------------------------------
+//
 
 void setup()
 {
@@ -81,7 +88,7 @@ void loop()
       if (client.available())
       {                         // if there's bytes to read from the client,
         char c = client.read(); // read a byte, then
-        write(c);               // print it out the serial monitor
+        Serial.write(c);        // print it out the serial monitor
         if (c == '\n')
         { // if the byte is a newline character
 
