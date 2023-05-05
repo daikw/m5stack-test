@@ -1,8 +1,10 @@
 #include <M5StickCPlus.h>
 #include <WiFi.h>
 
-const char *ssid = "*";
-const char *password = "*";
+#include "secrets.h"
+
+const char *ssid = WIFI_SSID;
+const char *password = WIFI_PASS;
 
 WiFiServer server(80);
 
