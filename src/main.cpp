@@ -4,11 +4,13 @@
 #include "secrets.h"
 #include "tb_display.h"
 
+#define LED_PIN GPIO_NUM_10
+#define SCREEN_ORIENTATION 3
+
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASS;
 
-uint8_t screen_brightness = 10;
-int screen_orientation = 3;
+int pinState = LOW;
 
 WiFiServer server(80);
 
@@ -22,7 +24,7 @@ void LCD_Reset()
   M5.Lcd.setCursor(0, 0);
   M5.Lcd.setTextColor(WHITE);
 
-  tb_display_init(screen_orientation);
+  tb_display_init(SCREEN_ORIENTATION);
 }
 
 void print(String str)
@@ -65,7 +67,9 @@ void setup()
   LCD_Reset();
 
   Serial.begin(115200);
-  pinMode(5, OUTPUT); // set the LED pin mode
+  pinMode(LED_PIN, OUTPUT); // set the LED pin mode
+  pinState = HIGH;
+  digitalWrite(LED_PIN, pinState);
 
   delay(10);
 
@@ -103,8 +107,9 @@ void loop()
             client.println();
 
             // the content of the HTTP response follows the header:
-            client.print("Click <a href=\"/H\">here</a> to turn the LED on pin 5 on.<br>");
-            client.print("Click <a href=\"/L\">here</a> to turn the LED on pin 5 off.<br>");
+            client.print("Click <a href=\"/high\">here</a> to turn the LED on.<br>");
+            client.print("Click <a href=\"/low\">here</a> to turn the LED off.<br>");
+            client.print("Click <a href=\"/toggle\">here</a> to toggle the LED off.<br>");
 
             // The HTTP response ends with another blank line:
             client.println();
@@ -121,15 +126,24 @@ void loop()
           currentLine += c; // add it to the end of the currentLine
         }
 
-        // Check to see if the client request was "GET /H" or "GET /L":
-        if (currentLine.endsWith("GET /H"))
+        // Routing
+        if (currentLine.endsWith("GET /high"))
         {
-          digitalWrite(5, HIGH); // GET /H turns the LED on
+          println("LED OFF");
+          pinState = HIGH;
         }
-        if (currentLine.endsWith("GET /L"))
+        if (currentLine.endsWith("GET /low"))
         {
-          digitalWrite(5, LOW); // GET /L turns the LED off
+          println("LED ON");
+          pinState = LOW;
         }
+        if (currentLine.endsWith("GET /toggle"))
+        {
+          println("LED TOGGLE");
+          pinState = 0x1 - pinState;
+        }
+
+        digitalWrite(LED_PIN, pinState);
       }
     }
     // close the connection:
