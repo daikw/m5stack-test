@@ -2,6 +2,8 @@
 
 - https://github.com/m5stack/M5StickC-Plus
 - https://github.com/electricidea/M5StickC-TB_Display
+- https://github.com/m5stack/M5Unit-ENV
+- https://github.com/m5stack/M5-DLight
 
 ## switch examples
 
