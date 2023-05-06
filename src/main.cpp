@@ -1,8 +1,10 @@
+// External libraries
 #include <M5StickCPlus.h>
 #include <WiFi.h>
 
-#include "secrets.h"
-#include "tb_display.h"
+// Project-specific libraries
+#include <secrets.h>
+#include <tb_display.h>
 
 #define LED_PIN GPIO_NUM_10
 #define SCREEN_ORIENTATION 3
