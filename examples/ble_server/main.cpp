@@ -120,16 +120,24 @@ void DisPlayBLESend() {
         pTxCharacteristic->notify();
       }
     } else {
+      int cursor = 0;
+
+      Disbuff.setCursor(12, cursor += 20);
       Disbuff.setTextSize(2);
-      Disbuff.setCursor(12, 20);
+      Disbuff.setTextColor(TFT_MAGENTA);
+      Disbuff.printf("Peripheral\n");
+      Disbuff.setCursor(12, cursor += 25);
+
       Disbuff.setTextColor(TFT_RED);
       Disbuff.printf("BLE disconnect\n");
-      Disbuff.setCursor(12, 45);
-      Disbuff.setTextColor(Disbuff.color565(18, 150, 219));
+      Disbuff.setCursor(12, cursor += 25);
 
-      Disbuff.printf(String("Name:" + blename + "\n").c_str());
-      Disbuff.setCursor(12, 70);
-      Disbuff.printf("UUID:1bc68b2a\n");
+      Disbuff.setTextColor(Disbuff.color565(18, 150, 219));
+      Disbuff.printf(String("Name: " + blename + "\n").c_str());
+      Disbuff.setCursor(12, cursor += 25);
+
+      Disbuff.printf("UUID: 1bc68b2a\n");
+
       Disbuff.pushImage(180, 16, 48, 48, (uint16_t *)icon_ble_disconnect);
     }
     Displaybuff();
