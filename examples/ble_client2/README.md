@@ -1,3 +1,5 @@
+BLE peripheral implementation, which provides a LED control service.
+
 requires `ArduinoBLE`
 
 ```platformio.ini
